@@ -5,6 +5,7 @@ const media = [
     { type: "image", src: "https://i.ibb.co/Xf8bSZXX/DSC-0455.jpg", thumb: "https://i.ibb.co/Xf8bSZXX/DSC-0455.jpg", caption: "20' FPIU - Hartshorne Police" },
     { type: "image", src: "https://i.ibb.co/HTv8q6Vs/DSC-0417.jpg", thumb: "https://i.ibb.co/HTv8q6Vs/DSC-0417.jpg", caption: "20' FPIU - Hartshorne Police" },
     { type: "image", src: "https://i.ibb.co/hFkjh1GG/DSC-0370.jpg", thumb: "https://i.ibb.co/hFkjh1GG/DSC-0370.jpg", caption: "20' FPIU - Hartshorne Police" }
+    // Add the rest of your images here (just copy the same pattern)
 ];
 
 function renderMedia() {
@@ -15,13 +16,13 @@ function renderMedia() {
     
     media.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'break-inside-avoid cursor-pointer';
+        div.className = 'break-inside-avoid mb-6 group cursor-pointer';
         div.innerHTML = `
-            <div class="relative overflow-hidden rounded-3xl bg-zinc-900">
+            <div class="relative overflow-hidden rounded-3xl bg-zinc-900 shadow-2xl">
                 <img src="${item.thumb}" alt="${item.caption}" 
-                     class="w-full h-auto object-cover masonry-img">
+                     class="w-full h-auto object-cover masonry-img transition-transform duration-300 group-hover:scale-105">
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-4">
-                    <p class="text-sm">${item.caption}</p>
+                    <p class="text-sm text-white">${item.caption}</p>
                 </div>
             </div>
         `;
@@ -52,39 +53,46 @@ function closeLightbox() {
     }
 }
 
-// Form handling
+// ====================== FORM HANDLING ======================
+function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;   // Safe for other pages
+
+    form.addEventListener('submit', function(e) {
+        // Formspree will handle the actual submission now
+        // This is just for UX feedback
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            // Optional: Reset after submission (Formspree redirects anyway)
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+    });
+}
+
+// ====================== INITIALIZE ======================
 document.addEventListener('DOMContentLoaded', () => {
     renderMedia();
     
-    // Lightbox close on background click
+    // Lightbox functionality
     const lightbox = document.getElementById('lightbox');
     if (lightbox) {
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) closeLightbox();
         });
     }
-    
-// Contact Form Handling
-document.getElementById('contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const btn = document.getElementById('submit-btn');
-    const originalText = btn.textContent;
-    
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
 
-    // For now: Show success message (replace with Formspree later)
-    setTimeout(() => {
-        alert("Message sent! I'll get back to you soon.");
-        document.getElementById('contact-form').reset();
-        btn.textContent = originalText;
-        btn.disabled = false;
-    }, 800);
-});
-    
     // Keyboard escape
     document.addEventListener('keydown', (e) => {
         if (e.key === "Escape") closeLightbox();
     });
+
+    // Contact form
+    initContactForm();
 });
